@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BMI Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; }
+        .container { background: #f8f9fa; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .input-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin: 20px 0; }
+        button:hover { background: #218838; }
+        .result { padding: 20px; margin: 20px 0; border-radius: 5px; text-align: center; font-size: 18px; }
+        .underweight { background: #cce5ff; color: #0066cc; }
+        .normal { background: #ccffcc; color: #009900; }
+        .overweight { background: #fff3cd; color: #856404; }
+        .obese { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BMI Calculator</h1>
+        
+        <div class="input-group">
+            <label for="weight">Weight:</label>
+            <input type="number" id="weight" placeholder="Enter weight" step="0.1">
+            <select id="weightUnit">
+                <option value="kg">Kilograms (kg)</option>
+                <option value="lbs">Pounds (lbs)</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label for="height">Height:</label>
+            <input type="number" id="height" placeholder="Enter height" step="0.1">
+            <select id="heightUnit">
+                <option value="cm">Centimeters (cm)</option>
+                <option value="ft">Feet (ft)</option>
+                <option value="m">Meters (m)</option>
+            </select>
+        </div>
+        
+        <button onclick="calculateBMI()">Calculate BMI</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const weightUnit = document.getElementById('weightUnit').value;
+            const heightUnit = document.getElementById('heightUnit').value;
+            
+            if (!weight || !height) {
+                alert('Please enter both weight and height');
+                return;
+            }
+            
+            // Convert to metric units
+            let weightKg = weight;
+            let heightM = height;
+            
+            if (weightUnit === 'lbs') {
+                weightKg = weight * 0.453592;
+            }
+            
+            if (heightUnit === 'cm') {
+                heightM = height / 100;
+            } else if (heightUnit === 'ft') {
+                heightM = height * 0.3048;
+            }
+            
+            const bmi = weightKg / (heightM * heightM);
+            
+            let category = '';
+            let className = '';
+            
+            if (bmi < 18.5) {
+                category = 'Underweight';
+                className = 'underweight';
+            } else if (bmi < 25) {
+                category = 'Normal weight';
+                className = 'normal';
+            } else if (bmi < 30) {
+                category = 'Overweight';
+                className = 'overweight';
+            } else {
+                category = 'Obese';
+                className = 'obese';
+            }
+            
+            document.getElementById('result').innerHTML = `
+                <div class="result ${className}">
+                    <h2>Your BMI: ${bmi.toFixed(1)}</h2>
+                    <p>Category: ${category}</p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

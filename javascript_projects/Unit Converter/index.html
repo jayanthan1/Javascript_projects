@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unit Converter</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .converter-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .input-group { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+        input, select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+        input[type="number"] { width: 150px; }
+        select { width: 180px; }
+        .result { font-size: 18px; font-weight: bold; color: #007bff; margin: 15px 0; }
+        h2 { color: #333; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Unit Converter</h1>
+        
+        <!-- Length Converter -->
+        <div class="converter-section">
+            <h2>Length Converter</h2>
+            <div class="input-group">
+                <input type="number" id="lengthInput" placeholder="Enter value" oninput="convertLength()">
+                <select id="lengthFrom" onchange="convertLength()">
+                    <option value="m">Meters</option>
+                    <option value="cm">Centimeters</option>
+                    <option value="km">Kilometers</option>
+                    <option value="ft">Feet</option>
+                    <option value="in">Inches</option>
+                    <option value="yd">Yards</option>
+                </select>
+                <span>to</span>
+                <select id="lengthTo" onchange="convertLength()">
+                    <option value="m">Meters</option>
+                    <option value="cm" selected>Centimeters</option>
+                    <option value="km">Kilometers</option>
+                    <option value="ft">Feet</option>
+                    <option value="in">Inches</option>
+                    <option value="yd">Yards</option>
+                </select>
+            </div>
+            <div class="result" id="lengthResult">Result will appear here</div>
+        </div>
+        
+        <!-- Weight Converter -->
+        <div class="converter-section">
+            <h2>Weight Converter</h2>
+            <div class="input-group">
+                <input type="number" id="weightInput" placeholder="Enter value" oninput="convertWeight()">
+                <select id="weightFrom" onchange="convertWeight()">
+                    <option value="kg">Kilograms</option>
+                    <option value="g">Grams</option>
+                    <option value="lb">Pounds</option>
+                    <option value="oz">Ounces</option>
+                </select>
+                <span>to</span>
+                <select id="weightTo" onchange="convertWeight()">
+                    <option value="kg">Kilograms</option>
+                    <option value="g" selected>Grams</option>
+                    <option value="lb">Pounds</option>
+                    <option value="oz">Ounces</option>
+                </select>
+            </div>
+            <div class="result" id="weightResult">Result will appear here</div>
+        </div>
+        
+        <!-- Temperature Converter -->
+        <div class="converter-section">
+            <h2>Temperature Converter</h2>
+            <div class="input-group">
+                <input type="number" id="tempInput" placeholder="Enter value" oninput="convertTemperature()">
+                <select id="tempFrom" onchange="convertTemperature()">
+                    <option value="c">Celsius</option>
+                    <option value="f">Fahrenheit</option>
+                    <option value="k">Kelvin</option>
+                </select>
+                <span>to</span>
+                <select id="tempTo" onchange="convertTemperature()">
+                    <option value="c">Celsius</option>
+                    <option value="f" selected>Fahrenheit</option>
+                    <option value="k">Kelvin</option>
+                </select>
+            </div>
+            <div class="result" id="tempResult">Result will appear here</div>
+        </div>
+    </div>
+
+    <script>
+        // Length conversion factors (to meters)
+        const lengthFactors = {
+            'm': 1,
+            'cm': 0.01,
+            'km': 1000,
+            'ft': 0.3048,
+            'in': 0.0254,
+            'yd': 0.9144
+        };
+
+        // Weight conversion factors (to grams)
+        const weightFactors = {
+            'g': 1,
+            'kg': 1000,
+            'lb': 453.592,
+            'oz': 28.3495
+        };
+
+        function convertLength() {
+            const input = document.getElementById('lengthInput').value;
+            const from = document.getElementById('lengthFrom').value;
+            const to = document.getElementById('lengthTo').value;
+            
+            if (!input) {
+                document.getElementById('lengthResult').textContent = 'Result will appear here';
+                return;
+            }
+            
+            const meters = parseFloat(input) * lengthFactors[from];
+            const result = meters / lengthFactors[to];
+            
+            document.getElementById('lengthResult').textContent = `${input} ${from} = ${result.toFixed(6)} ${to}`;
+        }
+
+        function convertWeight() {
+            const input = document.getElementById('weightInput').value;
+            const from = document.getElementById('weightFrom').value;
+            const to = document.getElementById('weightTo').value;
+            
+            if (!input) {
+                document.getElementById('weightResult').textContent = 'Result will appear here';
+                return;
+            }
+            
+            const grams = parseFloat(input) * weightFactors[from];
+            const result = grams / weightFactors[to];
+            
+            document.getElementById('weightResult').textContent = `${input} ${from} = ${result.toFixed(6)} ${to}`;
+        }
+
+        function convertTemperature() {
+            const input = document.getElementById('tempInput').value;
+            const from = document.getElementById('tempFrom').value;
+            const to = document.getElementById('tempTo').value;
+            
+            if (!input) {
+                document.getElementById('tempResult').textContent = 'Result will appear here';
+                return;
+            }
+            
+            let celsius;
+            const temp = parseFloat(input);
+            
+            // Convert to Celsius first
+            switch(from) {
+                case 'c': celsius = temp; break;
+                case 'f': celsius = (temp - 32) * 5/9; break;
+                case 'k': celsius = temp - 273.15; break;
+            }
+            
+            // Convert from Celsius to target
+            let result;
+            switch(to) {
+                case 'c': result = celsius; break;
+                case 'f': result = celsius * 9/5 + 32; break;
+                case 'k': result = celsius + 273.15; break;
+            }
+            
+            document.getElementById('tempResult').textContent = `${input}° ${from.toUpperCase()} = ${result.toFixed(2)}° ${to.toUpperCase()}`;
+        }
+    </script>
+</body>
+</html>

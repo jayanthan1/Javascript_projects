@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .input-group {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        input[type="date"] {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .age-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 15px 0;
+        }
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .detail-card {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .detail-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+        }
+        .fun-facts {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Age Calculator</h1>
+        
+        <div class="input-group">
+            <label for="birthdate">Enter your birth date:</label>
+            <input type="date" id="birthdate">
+            <button onclick="calculateAge()">Calculate Age</button>
+        </div>
+        
+        <div id="result" class="result" style="display: none;">
+            <div class="age-display" id="age-display"></div>
+            
+            <div class="details" id="age-details"></div>
+            
+            <div class="fun-facts" id="fun-facts"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateAge() {
+            const birthDateInput = document.getElementById('birthdate').value;
+            const resultDiv = document.getElementById('result');
+            const ageDisplay = document.getElementById('age-display');
+            const ageDetails = document.getElementById('age-details');
+            const funFacts = document.getElementById('fun-facts');
+            
+            if (!birthDateInput) {
+                alert('Please enter your birth date');
+                return;
+            }
+            
+            const birthDate = new Date(birthDateInput);
+            const today = new Date();
+            
+            // Check if birth date is in the future
+            if (birthDate > today) {
+                alert('Birth date cannot be in the future!');
+                return;
+            }
+            
+            // Calculate age
+            let years = today.getFullYear() - birthDate.getFullYear();
+            let months = today.getMonth() - birthDate.getMonth();
+            let days = today.getDate() - birthDate.getDate();
+            
+            // Adjust for negative days
+            if (days < 0) {
+                months--;
+                days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            
+            // Adjust for negative months
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            // Calculate total days lived
+            const timeDiff = today.getTime() - birthDate.getTime();
+            const totalDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+            const totalHours = Math.floor(timeDiff / (1000 * 3600));
+            const totalMinutes = Math.floor(timeDiff / (1000 * 60));
+            const totalSeconds = Math.floor(timeDiff / 1000);
+            
+            // Calculate next birthday
+            let nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            if (nextBirthday < today) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+            const daysUntilBirthday = Math.ceil((nextBirthday - today) / (1000 * 3600 * 24));
+            
+            // Display main age
+            ageDisplay.innerHTML = `You are ${years} years, ${months} months, and ${days} days old`;
+            
+            // Display detailed breakdown
+            ageDetails.innerHTML = `
+                <div class="detail-card">
+                    <div class="detail-number">${years.toLocaleString()}</div>
+                    <div>Years</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-number">${(years * 12 + months).toLocaleString()}</div>
+                    <div>Total Months</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-number">${totalDays.toLocaleString()}</div>
+                    <div>Total Days</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-number">${totalHours.toLocaleString()}</div>
+                    <div>Total Hours</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-number">${totalMinutes.toLocaleString()}</div>
+                    <div>Total Minutes</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-number">${totalSeconds.toLocaleString()}</div>
+                    <div>Total Seconds</div>
+                </div>
+            `;
+            
+            // Fun facts
+            const dayOfWeek = birthDate.toLocaleDateString('en-US', { weekday: 'long' });
+            const birthMonth = birthDate.toLocaleDateString('en-US', { month: 'long' });
+            const heartBeats = Math.floor(totalMinutes * 70); // Average 70 beats per minute
+            
+            funFacts.innerHTML = `
+                <h3>Fun Facts:</h3>
+                <ul>
+                    <li>You were born on a <strong>${dayOfWeek}</strong> in <strong>${birthMonth}</strong></li>
+                    <li>Your heart has beaten approximately <strong>${heartBeats.toLocaleString()}</strong> times</li>
+                    <li>Your next birthday is in <strong>${daysUntilBirthday}</strong> days</li>
+                    <li>You've experienced about <strong>${Math.floor(years * 365.25)}</strong> sunrises</li>
+                    <li>You're about <strong>${Math.floor(totalDays / 365.25 * 52)}</strong> weeks old</li>
+                </ul>
+            `;
+            
+            resultDiv.style.display = 'block';
+        }
+        
+        // Set max date to today
+        document.getElementById('birthdate').max = new Date().toISOString().split('T')[0];
+        
+        // Allow Enter key to calculate
+        document.getElementById('birthdate').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateAge();
+            }
+        });
+    </script>
+</body>
+</html>

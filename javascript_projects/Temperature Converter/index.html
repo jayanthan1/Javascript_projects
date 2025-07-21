@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .converter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .input-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        .output-section {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #17a2b8;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+        select {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button:hover {
+            transform: scale(1.02);
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .temp-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin: 15px 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .quick-convert {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .quick-btn {
+            padding: 10px;
+            font-size: 14px;
+            background: #6c757d;
+        }
+        .temp-scale-info {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        .history {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌡️ Temperature Converter</h1>
+        
+        <div class="converter-grid">
+            <div class="input-section">
+                <h3>Enter Temperature</h3>
+                <label for="temperature">Temperature Value:</label>
+                <input type="number" id="temperature" placeholder="Enter temperature" step="any" oninput="convertTemperature()">
+                
+                <label for="from-scale">From Scale:</label>
+                <select id="from-scale" onchange="convertTemperature()">
+                    <option value="celsius">Celsius (°C)</option>
+                    <option value="fahrenheit">Fahrenheit (°F)</option>
+                    <option value="kelvin">Kelvin (K)</option>
+                    <option value="rankine">Rankine (°R)</option>
+                </select>
+                
+                <button onclick="convertTemperature()">Convert</button>
+                
+                <div class="quick-convert">
+                    <button class="quick-btn" onclick="quickConvert(0, 'celsius')">0°C (Freezing)</button>
+                    <button class="quick-btn" onclick="quickConvert(100, 'celsius')">100°C (Boiling)</button>
+                    <button class="quick-btn" onclick="quickConvert(37, 'celsius')">37°C (Body Temp)</button>
+                    <button class="quick-btn" onclick="quickConvert(32, 'fahrenheit')">32°F (Freezing)</button>
+                    <button class="quick-btn" onclick="quickConvert(212, 'fahrenheit')">212°F (Boiling)</button>
+                    <button class="quick-btn" onclick="quickConvert(273.15, 'kelvin')">273.15K (Freezing)</button>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <h3>Converted Results</h3>
+                <div id="results">
+                    <div class="temp-display">Enter a temperature to convert</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="temp-scale-info">
+            <h3>Temperature Scale Information:</h3>
+            <ul>
+                <li><strong>Celsius (°C):</strong> Water freezes at 0°C and boils at 100°C</li>
+                <li><strong>Fahrenheit (°F):</strong> Water freezes at 32°F and boils at 212°F</li>
+                <li><strong>Kelvin (K):</strong> Absolute zero is 0K (-273.15°C)</li>
+                <li><strong>Rankine (°R):</strong> Absolute zero is 0°R, similar to Kelvin but uses Fahrenheit degrees</li>
+            </ul>
+        </div>
+        
+        <div class="history">
+            <h3>Conversion History</h3>
+            <div id="conversion-history">No conversions yet</div>
+        </div>
+    </div>
+
+    <script>
+        let conversionHistory = [];
+        
+        function convertTemperature() {
+            const tempInput = document.getElementById('temperature').value;
+            const fromScale = document.getElementById('from-scale').value;
+            const resultsDiv = document.getElementById('results');
+            
+            if (tempInput === '' || isNaN(tempInput)) {
+                resultsDiv.innerHTML = '<div class="temp-display">Enter a valid temperature</div>';
+                return;
+            }
+            
+            const inputTemp = parseFloat(tempInput);
+            
+            // Convert everything to Celsius first
+            let celsius;
+            switch(fromScale) {
+                case 'celsius':
+                    celsius = inputTemp;
+                    break;
+                case 'fahrenheit':
+                    celsius = (inputTemp - 32) * 5/9;
+                    break;
+                case 'kelvin':
+                    celsius = inputTemp - 273.15;
+                    break;
+                case 'rankine':
+                    celsius = (inputTemp - 491.67) * 5/9;
+                    break;
+            }
+            
+            // Convert from Celsius to all other scales
+            const fahrenheit = (celsius * 9/5) + 32;
+            const kelvin = celsius + 273.15;
+            const rankine = (celsius + 273.15) * 9/5;
+            
+            // Validate temperatures (check for absolute zero violations)
+            if (kelvin < 0) {
+                resultsDiv.innerHTML = '<div class="temp-display" style="color: #e74c3c;">⚠️ Temperature below absolute zero!</div>';
+                return;
+            }
+            
+            // Display results
+            resultsDiv.innerHTML = `
+                <div class="result" style="background: #d4edda; color: #155724;">
+                    <strong>Celsius:</strong> ${celsius.toFixed(2)}°C
+                </div>
+                <div class="result" style="background: #cce5ff; color: #004080;">
+                    <strong>Fahrenheit:</strong> ${fahrenheit.toFixed(2)}°F
+                </div>
+                <div class="result" style="background: #fff2e6; color: #cc6600;">
+                    <strong>Kelvin:</strong> ${kelvin.toFixed(2)}K
+                </div>
+                <div class="result" style="background: #f0e6ff; color: #6600cc;">
+                    <strong>Rankine:</strong> ${rankine.toFixed(2)}°R
+                </div>
+                <div class="temp-display" style="margin-top: 15px;">
+                    ${getTemperatureDescription(celsius)}
+                </div>
+            `;
+            
+            // Add to history
+            const scaleSymbols = {
+                celsius: '°C',
+                fahrenheit: '°F',
+                kelvin: 'K',
+                rankine: '°R'
+            };
+            
+            const conversion = `${inputTemp}${scaleSymbols[fromScale]} → C:${celsius.toFixed(1)}°C, F:${fahrenheit.toFixed(1)}°F, K:${kelvin.toFixed(1)}K`;
+            conversionHistory.unshift(conversion);
+            
+            if (conversionHistory.length > 5) {
+                conversionHistory.pop();
+            }
+            
+            updateHistory();
+        }
+        
+        function quickConvert(temp, scale) {
+            document.getElementById('temperature').value = temp;
+            document.getElementById('from-scale').value = scale;
+            convertTemperature();
+        }
+        
+        function getTemperatureDescription(celsius) {
+            if (celsius < -40) return "🥶 Extremely cold!";
+            if (celsius < 0) return "🧊 Below freezing";
+            if (celsius

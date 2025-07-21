@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stopwatch Timer</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container { 
+            text-align: center; 
+            background: white; 
+            padding: 50px; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        .display { 
+            font-size: 4em; 
+            font-weight: bold; 
+            margin: 30px 0; 
+            color: #333; 
+            font-family: 'Courier New', monospace;
+        }
+        .buttons { 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center; 
+            margin: 30px 0; 
+        }
+        button { 
+            padding: 15px 25px; 
+            font-size: 18px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.3s ease;
+        }
+        .start { background: #28a745; color: white; }
+        .start:hover { background: #218838; }
+        .stop { background: #dc3545; color: white; }
+        .stop:hover { background: #c82333; }
+        .reset { background: #6c757d; color: white; }
+        .reset:hover { background: #5a6268; }
+        .lap { background: #007bff; color: white; }
+        .lap:hover { background: #0056b3; }
+        .laps { 
+            margin-top: 30px; 
+            text-align: left; 
+            max-height: 200px; 
+            overflow-y: auto; 
+        }
+        .lap-time { 
+            padding: 8px; 
+            margin: 5px 0; 
+            background: #f8f9fa; 
+            border-radius: 5px; 
+            display: flex; 
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stopwatch Timer</h1>
+        <div class="display" id="display">00:00:00</div>
+        
+        <div class="buttons">
+            <button class="start" id="startBtn" onclick="startTimer()">Start</button>
+            <button class="stop" id="stopBtn" onclick="stopTimer()">Stop</button>
+            <button class="reset" onclick="resetTimer()">Reset</button>
+            <button class="lap" onclick="recordLap()">Lap</button>
+        </div>
+        
+        <div class="laps" id="laps"></div>
+    </div>
+
+    <script>
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let lapCount = 0;
+
+        function formatTime(milliseconds) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const ms = Math.floor((milliseconds % 1000) / 10);
+            
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+        }
+
+        function updateDisplay() {
+            const currentTime = Date.now();
+            elapsedTime = currentTime - startTime;
+            document.getElementById('display').textContent = formatTime(elapsedTime);
+        }
+
+        function startTimer() {
+            if (timerInterval === null) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateDisplay, 10);
+                document.getElementById('startBtn').textContent = 'Resume';
+            }
+        }
+
+        function stopTimer() {
+            if (timerInterval !== null) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            elapsedTime = 0;
+            lapCount = 0;
+            document.getElementById('display').textContent = '00:00:00';
+            document.getElementById('startBtn').textContent = 'Start';
+            document.getElementById('laps').innerHTML = '';
+        }
+
+        function recordLap() {
+            if (timerInterval !== null) {
+                lapCount++;
+                const lapTime = formatTime(elapsedTime);
+                const lapElement = document.createElement('div');
+                lapElement.className = 'lap-time';
+                lapElement.innerHTML = `
+                    <span>Lap ${lapCount}</span>
+                    <span>${lapTime}</span>
+                `;
+                document.getElementById('laps').insertBefore(lapElement, document.getElementById('laps').firstChild);
+            }
+        }
+    </script>
+</body>
+</html>

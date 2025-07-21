@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Color Picker</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .color-display { width: 200px; height: 200px; border: 2px solid #000; margin: 20px 0; }
+        input { margin: 10px 0; padding: 10px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Color Picker Tool</h1>
+    <input type="color" id="colorPicker" value="#ff0000">
+    <div class="color-display" id="colorDisplay"></div>
+    <div>
+        <p>Hex: <span id="hexValue">#ff0000</span></p>
+        <p>RGB: <span id="rgbValue">rgb(255, 0, 0)</span></p>
+    </div>
+
+    <script>
+        const colorPicker = document.getElementById('colorPicker');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const hexValue = document.getElementById('hexValue');
+        const rgbValue = document.getElementById('rgbValue');
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        colorPicker.addEventListener('input', function() {
+            const color = this.value;
+            colorDisplay.style.backgroundColor = color;
+            hexValue.textContent = color;
+            
+            const rgb = hexToRgb(color);
+            rgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+        });
+
+        // Initialize
+        colorDisplay.style.backgroundColor = '#ff0000';
+    </script>
+</body>
+</html>

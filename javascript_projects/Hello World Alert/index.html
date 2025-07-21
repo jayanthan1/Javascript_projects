@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World Alert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello World Alert</h1>
+        <p>Click the button to get a personalized greeting!</p>
+        <button onclick="showGreeting()">Say Hello!</button>
+    </div>
+
+    <script>
+        function showGreeting() {
+            // Ask user for their name
+            const name = prompt("What's your name?");
+            
+            // Use default name if user cancels or enters nothing
+            const displayName = name && name.trim() !== "" ? name : "World";
+            
+            // Show personalized greeting
+            alert(`Hello, ${displayName}! Welcome to JavaScript programming!`);
+        }
+        
+        // Optional: Show greeting when page loads
+        window.onload = function() {
+            setTimeout(() => {
+                if (confirm("Would you like to see a greeting?")) {
+                    showGreeting();
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

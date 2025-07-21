@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .calculator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        input[type="number"] {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            width: 120px;
+        }
+        select {
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 30px;
+            border-left: 4px solid #667eea;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .history {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f1f3f4;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .history h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Calculator</h1>
+        
+        <div class="calculator">
+            <input type="number" id="num1" placeholder="First number" step="any">
+            <select id="operator">
+                <option value="+">+ (Add)</option>
+                <option value="-">- (Subtract)</option>
+                <option value="*">× (Multiply)</option>
+                <option value="/">÷ (Divide)</option>
+                <option value="**">^ (Power)</option>
+                <option value="%">% (Modulus)</option>
+            </select>
+            <input type="number" id="num2" placeholder="Second number" step="any">
+            <button onclick="calculate()">Calculate</button>
+        </div>
+        
+        <div class="calculator">
+            <button onclick="clearAll()">Clear All</button>
+            <button onclick="clearLast()">Clear Last</button>
+        </div>
+        
+        <div id="result" class="result">
+            Enter numbers and click Calculate
+        </div>
+        
+        <div class="history">
+            <h3>History</h3>
+            <div id="history-list">No calculations yet</div>
+        </div>
+    </div>
+
+    <script>
+        let calculationHistory = [];
+        
+        function calculate() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const operator = document.getElementById('operator').value;
+            const resultDiv = document.getElementById('result');
+            
+            // Validate inputs
+            if (isNaN(num1) || isNaN(num2)) {
+                resultDiv.innerHTML = '⚠️ Please enter valid numbers';
+                resultDiv.style.color = '#e74c3c';
+                return;
+            }
+            
+            let result;
+            let operatorSymbol;
+            
+            switch(operator) {
+                case '+':
+                    result = num1 + num2;
+                    operatorSymbol = '+';
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    operatorSymbol = '-';
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    operatorSymbol = '×';
+                    break;
+                case '/':
+                    if (num2 === 0) {
+                        resultDiv.innerHTML = '⚠️ Error: Cannot divide by zero';
+                        resultDiv.style.color = '#e74c3c';
+                        return;
+                    }
+                    result = num1 / num2;
+                    operatorSymbol = '÷';
+                    break;
+                case '**':
+                    result = Math.pow(num1, num2);
+                    operatorSymbol = '^';
+                    break;
+                case '%':
+                    result = num1 % num2;
+                    operatorSymbol = '%';
+                    break;
+                default:
+                    resultDiv.innerHTML = '⚠️ Invalid operator';
+                    resultDiv.style.color = '#e74c3c';
+                    return;
+            }
+            
+            // Format result
+            const formattedResult = Number.isInteger(result) ? result : result.toFixed(4);
+            
+            // Display result
+            resultDiv.innerHTML = `${num1} ${operatorSymbol} ${num2} = ${formattedResult}`;
+            resultDiv.style.color = '#27ae60';
+            
+            // Add to history
+            const calculation = `${num1} ${operatorSymbol} ${num2} = ${formattedResult}`;
+            calculationHistory.unshift(calculation);
+            
+            // Keep only last 10 calculations
+            if (calculationHistory.length > 10) {
+                calculationHistory.pop();
+            }
+            
+            updateHistory();
+        }
+        
+        function updateHistory() {
+            const historyDiv = document.getElementById('history-list');
+            
+            if (calculationHistory.length === 0) {
+                historyDiv.innerHTML = 'No calculations yet';
+                return;
+            }
+            
+            historyDiv.innerHTML = calculationHistory
+                .map((calc, index) => `<div>${index + 1}. ${calc}</div>`)
+                .join('');
+        }
+        
+        function clearAll() {
+            document.getElementById('num1').value = '';
+            document.getElementById('num2').value = '';
+            document.getElementById('result').innerHTML = 'Enter numbers and click Calculate';
+            document.getElementById('result').style.color = '#333';
+            calculationHistory = [];
+            updateHistory();
+        }
+        
+        function clearLast() {
+            document.getElementById('num1').value = '';
+            document.getElementById('num2').value = '';
+            document.getElementById('result').innerHTML = 'Enter numbers and click Calculate';
+            document.getElementById('result').style.color = '#333';
+        }
+        
+        // Allow Enter key to calculate
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
+</body>
+</html>
